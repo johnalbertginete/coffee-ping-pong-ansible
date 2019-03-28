@@ -1,0 +1,31 @@
+---
+# tasks file for coffeepingpong
+- name: Ping hosts
+  ping:
+
+- name: Clone from git
+  git:
+    repo: https://github.com/johnalbertginete/coffee-ping-pong.git
+    dest: ~/{{ destFolder }}
+    version: HEAD
+
+- name: Set variable for serviceA
+  set_fact:
+    serviceName: "serviceA"
+    servicePort: "3000"
+  when: hostvars[inventory_hostname]['ansible_default_ipv4']['address'] == "172.31.35.226"
+
+- name: Set variable for serviceB
+  set_fact:
+    serviceName: "serviceB"
+    servicePort: "3001"
+  when: hostvars[inventory_hostname]['ansible_default_ipv4']['address'] == "172.31.29.94"
+
+- name: Set variable for serviceC
+  set_fact:
+    serviceName: "serviceC"
+    servicePort: "3002"
+  when: hostvars[inventory_hostname]['ansible_default_ipv4']['address'] == "172.31.16.21"
+
+- name: Install and Deploy
+  command: cd ~/{{ destFolder }} && npm install && SERVICE_NAME={{ serviceName}} PORT={{ servicePort }} npm start
